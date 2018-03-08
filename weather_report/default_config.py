@@ -3,7 +3,7 @@ defaults = '''# This is the Weather Report Initialization File
 #
 # Program Description
 # -------------------
-# This program will sve local copies of NOAA weather report each time it is run.
+# This program will save local copies of NOAA weather report each time it is run.
 # There are many options for configuring the behavior to support continuous
 # weather checking, including email alerts, pdf attachments, and detailed
 # control of the notification system frequency.
