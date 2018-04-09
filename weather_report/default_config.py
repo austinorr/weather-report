@@ -35,7 +35,7 @@ defaults = '''# This is the Weather Report Initialization File
 [project_info]
 # --- BEGIN Required Information --- #
 
-# This should be the infor for the person configuring this file (you)
+# This should be the info for the person configuring this file (you)
 primary_contact_name = Your Name
 primary_contact_email = you@domain.com
 
