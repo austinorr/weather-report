@@ -176,6 +176,7 @@ class WeatherReport(object):
                  pdf_content_order_list=None,
                  additional_urls_list=None,
                  silent_mode_bool=None,
+                 **kwargs,
                  ):
         self.user = user
         self.pwd = pwd
@@ -201,7 +202,7 @@ class WeatherReport(object):
         self.pdf_save_interval_hours = float(pdf_save_interval_hours)
 
         if pdf_save_interval_start_time is None:
-            pdf_save_interval_start_time = "0"
+            pdf_save_interval_start_time = '0'
         self.pdf_save_interval_start_time = _parse_time(
             pdf_save_interval_start_time)
 
@@ -232,6 +233,8 @@ class WeatherReport(object):
         if silent_mode_bool is None:
             silent_mode_bool = False
         self.silent_mode_bool = silent_mode_bool
+
+        self.unused_args = kwargs
 
         required = ['primary_contact_name', 'primary_contact_email',
                     'site_description', 'site_short_name', 'site_map_click_url',
@@ -330,7 +333,9 @@ class WeatherReport(object):
 
         try:
             last_alert_time = self._read_last_alert_file()
-            interval = timedelta(hours=float(self.alert_resend_interval_hours))
+            tolerance = timedelta(minutes=5)
+            interval = timedelta(hours=float(
+                self.alert_resend_interval_hours)) - tolerance
             out_of_date = datetime.utcnow() - interval > last_alert_time
 
         except FileNotFoundError as e:
@@ -359,7 +364,9 @@ class WeatherReport(object):
 
         try:
             last_pdf_time = self._read_last_pdf_file()
-            interval = timedelta(hours=float(self.pdf_save_interval_hours))
+            tolerance = timedelta(minutes=5)
+            interval = timedelta(hours=float(
+                self.pdf_save_interval_hours)) - tolerance
             out_of_date = datetime.utcnow() - interval > last_pdf_time
 
         except FileNotFoundError as e:
@@ -451,7 +458,7 @@ class WeatherReport(object):
 
     def send_alert_email(self):
         _email_subject = 'ALERT: NOAA Forecast expects greater than {}% chance of rain in next 48 hours at {}.'.format(
-            self.pdf_threshold_value, self.site_short_name
+            self.alert_threshold_value, self.site_short_name
         )
 
         _email_body = '''
@@ -539,7 +546,7 @@ class WeatherReport(object):
 
     def run(self):
         try:
-            if self.needs_new_pdf and _get_current_hour_minute() > self.pdf_save_interval_start_time:
+            if self.needs_new_pdf and _get_current_hour_minute() >= self.pdf_save_interval_start_time:
                 self.save_pdf()
                 self._write_last_pdf_file()
                 if self.pdf_email_list:
@@ -549,6 +556,7 @@ class WeatherReport(object):
                 if self.alert_email_list:
                     self.send_alert_email()
                     self._write_last_alert_file()
+
         except Exception as e:
             self.logger.exception(e)
             if not self.silent_mode_bool:

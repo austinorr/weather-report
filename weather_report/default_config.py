@@ -40,8 +40,8 @@ primary_contact_name = Your Name
 primary_contact_email = you@domain.com
 
 # Site and Project Information
-site_description = CGP/IGP Site sampling and ongoing monitoring
-site_short_name = CGP/IGP Site
+site_description = CGP IGP Site sampling and ongoing monitoring
+site_short_name = CGP IGP Site
 project_number = WW1234
 
 #################################################################################################################################
